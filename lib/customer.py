@@ -107,11 +107,13 @@ class Customer():
 
     def deposit_into(self, account_type, idx, amount):
         """Adds money to the specified account"""
-        self._accounts[account_type][idx].deposit(amount)
+        rc = self._accounts[account_type][idx].deposit(amount)
+        return rc
 
     def withdraw_from(self, account_type, idx, amount, age=None):
         """Subtracts money from the specified account"""
         if age:
-            self._accounts[account_type][idx].withdraw(amount, age)
+            rc = self._accounts[account_type][idx].withdraw(amount, age)
         else:
-            self._accounts[account_type][idx].withdraw(amount)
+            rc = self._accounts[account_type][idx].withdraw(amount)
+        return rc

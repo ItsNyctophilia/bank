@@ -34,7 +34,7 @@ class Retirement(Account):
         balance, 0 if customer is not old enough to withdraw,
         and otherwise returns 1"""
         if customer_age < 67:
-            return 0
+            return -2
         if to_withdraw > self._balance:
             return -1
         else:

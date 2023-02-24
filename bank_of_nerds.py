@@ -46,12 +46,13 @@ def get_input(quit_string=None, quit_idx=None):
     perform either 'go-back' or a 'quit'."""
     while True:
         try:
-            selection = input("\n> ")
+            selection = input("> ")
             selection = selection.title().strip()
             if not selection:
                 continue
             if quit_string:
-                if (selection == quit_string or selection == str(quit_idx)):
+                if (selection == quit_string or
+                        selection == str(quit_idx)):
                     return -1
             break
 
@@ -119,37 +120,85 @@ def perform_transaction(account_type, number, amount, user, user_func):
     user_func -- the function (withdraw/deposit) to perform
 
     Performs the validation of the first three arguments to ensure
-    the passed function call is safe. Returns -3 for invalid
-    account type, -2 for number or amount unable to be converted
-    to the correct data type, -1 for negative values, 0 for invalid
-    index, and 1 for success."""
+    the passed function call is safe. Returns -4 for transactional 
+    error, -3 for invalid account type, -2 for number or amount 
+    unable to be converted to the correct data type, -1 for 
+    negative values, 0 for invalid index, and 1 for success.
+    Also returns an informative string detailing the transaction
+    details if relevant."""
     account_types = ("Checking", "Savings", "Money Market Fund", "401K")
     if account_type not in account_types:
         # Case: invalid account type
         return -3
+    
+    return_msg = {"Checking": {-1: "overdraft limit exceeded",
+                                    0: "account overdrafted"},
+                    "Savings": {-1: "account balance exceeded"},
+                    "401K": {-2: "not old enough to withdraw",
+                                -1: "account balance exceeded"},
+                    "Money Market Fund": {-2: "max monthly withdrawls: 2",
+                                        -1: "account balance exceeded"}}
+    info_msg = None
 
     try:
         number = int(number) - 1  # Index is number - 1
         amount = float(amount)
-        if amount < 0 or number < 0:
-            # Case: negative withdrawl/deposit amount
-            return -1
-        try:
-            if account_type == "401K" and user_func == user.withdraw_from:
-                user_func(account_type, number, amount, user.age)
-            else:
-                user_func(account_type, number, amount)
-            return 1
-        except IndexError:
-            return 0
-
     except (TypeError, ValueError):
         # Case: unable to convert number/amount to int or float
-        return -2
+        return (-2, None)
+    if amount < 0 or number < 0:
+        # Case: negative withdrawl/deposit amount
+        return (-1, None)
+    try:
+        if account_type == "401K" and user_func == user.withdraw_from:
+            rc = user_func(account_type, number, amount, user.age)
+        else:
+            rc = user_func(account_type, number, amount)
+
+        if rc < 1:
+            info_msg = return_msg[account_type][rc]
+        if rc == 1:
+            return (1, None)
+        return (-4, info_msg) if info_msg else (1, info_msg)
+            
+
+    except IndexError:
+        return (0, None)
+
 
 def secret_print(users):
     for user in users:
-        print(f"{user.first_name} {user.last_name}\n", f"Age: {user.age} User_ID: {user.user_ID}\n", get_account_printout(user))
+        print(f"{user.first_name} {user.last_name}\n",
+              f"Age: {user.age} User_ID: {user.user_ID}\n",
+              get_account_printout(user))
+
+
+def select_user(users):
+    """Returns selected user, 0 if invalid option or -1 for "go-back"
+
+    Keyword arguments:
+    user_input -- sanitized output from get_input
+    selected_user -- valid user object to be returned 
+
+    At least users must be passed as an argument,
+    otherwise the function will fail and not select a user.
+    Returns selected user or 0 if the program should produce
+    a value error or if the user selects an id not contained 
+    in the list of users. Also will retunr -1 for "go-back"
+    or "quit"."""
+    user_input = get_input("B")
+    if user_input == -1:
+        return -1
+    try:
+        user_input = int(user_input)
+    except ValueError:
+        return 0
+    if 0 < user_input <= len(users):
+        selected_user = users[user_input - 1]
+        return selected_user
+    else:
+        return 0
+
 
 def use_teller(opt):
     """Primary loop for the program"""
@@ -185,23 +234,16 @@ def use_teller(opt):
             print("\n", get_users(users), "\n", sep="")
 
         elif user_input == "Select User":
-            default_error = "Invalid ID,"
             print("\n", get_users(users), "\n\n",
                   "Enter a User_ID from the above list: (B for back)",
-                  sep="")
-            user_input = get_input("B")
-            if user_input == -1:
+                  "\n", sep="")
+            default_error = "Invalid ID, returning to main menu."
+            return_code = select_user(users)
+            if return_code == -1:
                 continue
-            try:
-                user_input = int(user_input)
-            except ValueError:
-                print("\n", default_error, back_to_menu, sep="")
-                continue
-            if 0 < user_input <= len(users):
-                selected_user = users[user_input - 1]
-            else:
+            if return_code == 0:
                 print("\n", default_error, "\n", sep="")
-            continue
+            selected_user = return_code
 
         elif user_input == "Display Accounts":
             default_error = "No active user account"
@@ -215,33 +257,40 @@ def use_teller(opt):
             if not selected_user:
                 print("\n", default_error, back_to_menu, sep="")
                 continue
-            transaction_type = None
+            transaction_type = user_input
             if user_input == "Withdraw":
                 user_func = selected_user.withdraw_from
-                transaction_type = "Withdraw"
             else:
                 user_func = selected_user.deposit_into
-                transaction_type = "Deposit"
             print(get_account_printout(selected_user))
             print(f"{transaction_type} mode:", "\n"
                   "Select account by 'type:number:amt': (B for back)",
-                  "\n", "ex. '401k:1:$400'", sep="")
+                  "\n", "ex. '401k:1:$400'", "\n", sep="")
             user_input = get_input("B")
             if user_input == -1:
                 continue
             try:
                 account_type, number, amount = user_input.split(":")
             except ValueError:
-                print("Incorrect number of values provided,", back_to_menu)
+                print("\n", "Incorrect number of values provided,", 
+                      back_to_menu, "\n", sep="")
                 continue
-            rc = perform_transaction(account_type, number, amount,
-                                     selected_user, user_func)
-            return_messages = {-3: "Invalid account type,",
+            (rc, info_msg) = perform_transaction(account_type, number, 
+                                                 amount, selected_user, 
+                                                 user_func)
+            return_messages = {-4: "Transaction failed",
+                               -3: "Invalid account type,",
                                -2: "Invalid type/amount,",
                                -1: "Type/Amount must be positive,",
                                0: "Invalid account number,",
-                               1: f"{transaction_type} successful,"}
-            print("\n", return_messages[rc], " ", back_to_menu, "\n", sep="")
+                               1: f"{transaction_type} successful"}
+            if info_msg:
+                print("\n", return_messages[rc], ": ", info_msg, ",\n",
+                      back_to_menu, "\n", sep="")
+                continue
+            print("\n", return_messages[rc], " ", back_to_menu,
+                  "\n", sep="")
+
 
 
 def main():
@@ -250,8 +299,8 @@ def main():
 
 
 if __name__ == "__main__":
-    # try:
-         main()
-    # # except (Exception, GeneratorExit, KeyboardInterrupt, SystemExit) as e:
-    #     name = type(e).__name__
-    #     print("Exception of type", name, "prevented program from continuing!")
+    try:
+        main()
+    except (Exception, GeneratorExit, KeyboardInterrupt, SystemExit) as e:
+        name = type(e).__name__
+        print("Exception of type", name, "prevented program from continuing!")
