@@ -70,7 +70,7 @@ def generate_default_users(users_list):
     market_fund1 = market_fund.MoneyMarket(3560.75)
     user1.add_account("Savings", savings1)
     user1.add_account("Checking", checking1)
-    user1.add_account("401k", retirement1)
+    user1.add_account("401K", retirement1)
     user1.add_account("Money Market Fund", market_fund1)
 
     user2 = customer.Customer("John", "Doe", 24)
@@ -114,7 +114,7 @@ def use_teller():
 
         if user_input == "Get Users":
             print("\n", get_users(users), "\n", sep="")
-        
+
         elif user_input == "Select User":
             default_error = "Invalid ID, returning to main menu."
             print("\n", get_users(users), "\n\n",
@@ -133,7 +133,7 @@ def use_teller():
             else:
                 print("\n", default_error, "\n", sep="")
             continue
-        
+
         elif user_input == "Display Accounts":
             default_error = "No active user account, returning to main menu."
             if not selected_user:
@@ -144,6 +144,39 @@ def use_teller():
             account_title = f"{f_name} {l_name}'s Accounts"
             print("\n", account_title, "\n", "-" * len(account_title),
                   "\n", selected_user.get_all_balances(), "\n", sep="")
+            
+        elif user_input in ("Withdraw", "Deposit"):
+            if user_input == "Withdraw":
+                user_func = selected_user.withdraw_from
+            else:
+                user_func = selected_user.deposit_into
+            default_error = "No active user account, returning to main menu."
+            if not selected_user:
+                print("\n", default_error, "\n", sep="")
+                continue
+            f_name = selected_user.first_name
+            l_name = selected_user.last_name
+            account_title = f"{f_name} {l_name}'s Accounts"
+            print("\n", account_title, "\n", "-" * len(account_title),
+                  "\n", selected_user.get_all_balances(), "\n", sep="")
+            print("Select account by 'type:number:amt': (B for back)", 
+                  "\n", "ex. '401k:1:$400'", sep="")
+            user_input = get_input("B")
+            if user_input == -1:
+                continue
+            account_type, number, amount = user_input.split(":")
+            print(account_type, number, amount)
+            if account_type in ("Checking", "Savings", "Money Market Fund"):
+                try:
+                    user_func(account_type, int(number) - 1, int(amount))
+                except (IndexError, TypeError):
+                    print("Invalid account number, returning to main menu.")
+            elif account_type == "401K":
+                try:
+                    user_func(account_type, int(number) - 1, 
+                                                int(amount), selected_user.age)
+                except (IndexError, TypeError):
+                    print("Invalid account number, returning to main menu.")
 
 def main():
     use_teller()

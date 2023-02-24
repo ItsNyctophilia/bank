@@ -42,7 +42,7 @@ class Customer():
         self._age = age
         self._user_ID = Customer.ID
         self._accounts = {"Checking": [], "Savings": [],
-                          "401k": [], "Money Market Fund": []}
+                          "401K": [], "Money Market Fund": []}
         Customer.ID += 1
 
     @property
