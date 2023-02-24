@@ -108,9 +108,12 @@ class Customer(ABC):
         self._accounts[account_type].append(account)
 
     def deposit_into(self, account_type, idx, amount):
-        """Add money to the current balance, returns new balance"""
+        """Adds money to the specified account"""
         self._accounts[account_type][idx].deposit(amount)
 
-    def withdraw_from(self, account_type, idx, amount):
-        """Subtract money from the current balance"""
-        self._accounts[account_type][idx].withdraw(amount)
+    def withdraw_from(self, account_type, idx, amount, age=None):
+        """Subtracts money from the specified account"""
+        if age:
+            self._accounts[account_type][idx].withdraw(amount, age)
+        else:
+            self._accounts[account_type][idx].withdraw(amount)
