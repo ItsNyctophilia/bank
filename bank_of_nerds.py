@@ -24,8 +24,9 @@ def create_main_menu():
     main_menu = menu.Menu()
     menu_dict = {}
     menu_dict_rev = {}
-    menu_options = ["Get Users", "Select User", "Display Accounts",
-                    "Withdraw", "Deposit", "Quit"]
+    menu_options = ["Get Users", "New User", "Select User",
+                    "Display Accounts", "Withdraw", "Deposit",
+                    "New Account", "Quit"]
     for idx, selection in enumerate(menu_options, 1):
         main_menu.add_selection(selection)
         menu_dict.update({selection: str(idx)})
@@ -177,15 +178,10 @@ def select_user(users):
     """Returns selected user, 0 if invalid option or -1 for "go-back"
 
     Keyword arguments:
-    user_input -- sanitized output from get_input
-    selected_user -- valid user object to be returned 
+    users -- list of all users in customer databse
 
-    At least users must be passed as an argument,
-    otherwise the function will fail and not select a user.
-    Returns selected user or 0 if the program should produce
-    a value error or if the user selects an id not contained 
-    in the list of users. Also will retunr -1 for "go-back"
-    or "quit"."""
+    Returns selected user, 0 should the program produce an error,
+    and -1 for 'go-back'"""
     user_input = get_input("B")
     if user_input == -1:
         return -1
@@ -207,14 +203,18 @@ def use_teller(opt):
     users = []
     users = generate_default_users(users)
     selected_user = None
-    back_to_menu = "returning to main menu."
+    account_types = ("Checking", "Savings", "Money Market Fund", "401K")
+    default_error = "No active user account, "
+    back_to_menu = "returning to main menu.\n"
     
     if opt.secret == 'backdoor':
         secret_print(users)
         
 
     while True:
+        default_error = "No active user account, "
         print(main_menu)
+
         user_input = get_input("Quit", menu_dict["Quit"])
         if user_input == -1:
             # Program exiting due to EOF, KeyboardInterrupt, or "quit"
@@ -237,23 +237,21 @@ def use_teller(opt):
             print("\n", get_users(users), "\n\n",
                   "Enter a User_ID from the above list: (B for back)",
                   "\n", sep="")
-            default_error = "Invalid ID, returning to main menu."
+            default_error = "Invalid ID, "
             return_code = select_user(users)
             if return_code == -1:
                 continue
             if return_code == 0:
-                print("\n", default_error, "\n", sep="")
+                print("\n", default_error, back_to_menu, "\n", sep="")
             selected_user = return_code
 
         elif user_input == "Display Accounts":
-            default_error = "No active user account"
             if not selected_user:
                 print("\n", default_error, back_to_menu, sep="")
                 continue
             print(get_account_printout(selected_user))
 
         elif user_input in ("Withdraw", "Deposit"):
-            default_error = "No active user account,"
             if not selected_user:
                 print("\n", default_error, back_to_menu, sep="")
                 continue
@@ -265,14 +263,14 @@ def use_teller(opt):
             print(get_account_printout(selected_user))
             print(f"{transaction_type} mode:", "\n"
                   "Select account by 'type:number:amt': (B for back)",
-                  "\n", "ex. '401k:1:$400'", "\n", sep="")
+                  "\n", "ex. '401k:1:400.00'", "\n", sep="")
             user_input = get_input("B")
             if user_input == -1:
                 continue
             try:
                 account_type, number, amount = user_input.split(":")
             except ValueError:
-                print("\n", "Incorrect number of values provided,", 
+                print("\n", "Incorrect number of values provided, ", 
                       back_to_menu, "\n", sep="")
                 continue
             (rc, info_msg) = perform_transaction(account_type, number, 
@@ -290,6 +288,42 @@ def use_teller(opt):
                 continue
             print("\n", return_messages[rc], " ", back_to_menu,
                   "\n", sep="")
+            
+        elif user_input == "New Account":
+            if not selected_user:
+                print("\n", default_error, back_to_menu, sep="")
+                continue
+            print("Account creation mode:", "\n"
+                  "Provide type & initial amount by 'type:amt': (B for back)",
+                  "\n", "ex. '401k:400.00'", "\n", sep="")
+            user_input = get_input("B")
+            try:
+                account_type, amount = user_input.split(":")
+            except ValueError:
+                print("\n", "Incorrect number of values provided, ", 
+                      back_to_menu, "\n", sep="")
+                continue
+            try:
+                amount = float(amount)
+                if amount < 0:
+                    print("\n", "Initiial amount must be positve, ", 
+                            back_to_menu, "\n", sep="")
+                    continue
+            except ValueError:
+                print("\n", "Amount must be a valid number, ", 
+                      back_to_menu, "\n", sep="")
+                continue
+            if account_type not in account_types:
+                print("\n", "Invalid account type, ", back_to_menu,
+                      "\n", sep="")
+                continue
+            account_classes = {"Checking": checking.Checking,
+                               "Savings": savings.Savings,
+                               "401K": retirement.Retirement,
+                               "Money Market Fund": market_fund.MoneyMarket}
+            new_account = account_classes[account_type](amount)
+            selected_user.add_account(account_type, new_account)
+            print("\n", "Account added successfully.", "\n", sep="")
 
 
 
