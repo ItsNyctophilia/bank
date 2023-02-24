@@ -25,7 +25,7 @@ class TestRetirement(unittest.TestCase):
 
         # Test withdrawing with customer under age 67
         result = retirement.withdraw(500, 50)
-        self.assertEqual(result, 0)
+        self.assertEqual(result, -2)
         self.assertEqual(retirement.balance, 500)
 
 

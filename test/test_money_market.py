@@ -21,7 +21,7 @@ class TestMoneyMarket(unittest.TestCase):
         self.assertEqual(result, 1)
         self.assertEqual(money_market.balance, 200)
         result = money_market.withdraw(100)
-        self.assertEqual(result, -1)
+        self.assertEqual(result, -2)
 
 
 if __name__ == "__main__":
