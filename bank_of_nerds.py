@@ -93,13 +93,13 @@ def select_user(default_error,users):
     
     Keyword arguments:
     default_error -- error message string
-    user_input -- sanatized output from get_input
+    user_input -- sanitized output from get_input
     selected_user -- valid user object to be returned 
     
-    At least defualt_error, and users must be passed as an arguments,
+    At least default_error, and users must be passed as arguments,
     otherwise the function will fail and not select a user.
     Returns selected user or -1 if the program should produce
-    a value error or if the user selects a id not contained 
+    a value error or if the user selects an id not contained 
     in the list of users."""
     print("\n", get_users(users), "\n\n",
     "Enter a User_ID from the above list: (B for back)", 
@@ -148,9 +148,10 @@ def use_teller():
 
         elif user_input == "Select User":
             default_error = "Invalid ID, returning to main menu."
-            selected_user = select_user(default_error,users)
-            if selected_user == -1:
+            return_code = select_user(default_error,users)
+            if return_code == -1:
                 continue
+            selected_user = return_code
 
         elif user_input == "Display Accounts":
             default_error = "No active user account, returning to main menu."
