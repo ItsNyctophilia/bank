@@ -5,6 +5,7 @@ This program allows the user to view and modify bank account
 information for the various accounts of pre-defined customers,
 as well as ones added during runtime."""
 
+import argparse
 import lib.menu as menu
 import lib.account as account
 import lib.retirement as retirement
@@ -101,6 +102,11 @@ def get_account_printout(selected_user):
                        "\n", selected_user.get_all_balances(), "\n"))
     return printout
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--secret', choices=('backdoor',), default='')
+    args = parser.parse_args()
+    return args
 
 def perform_transaction(account_type, number, amount, user, user_func):
     """Calls the passed transaction function after input validation
@@ -141,8 +147,11 @@ def perform_transaction(account_type, number, amount, user, user_func):
         # Case: unable to convert number/amount to int or float
         return -2
 
+def secret_print(users):
+    for user in users:
+        print(f"{user.first_name} {user.last_name}\n", f"Age: {user.age} User_ID: {user.user_ID}\n", get_account_printout(user))
 
-def use_teller():
+def use_teller(opt):
     """Primary loop for the program"""
     # TODO: better docstring
     main_menu, menu_dict, menu_dict_rev = create_main_menu()
@@ -150,6 +159,10 @@ def use_teller():
     users = generate_default_users(users)
     selected_user = None
     back_to_menu = "returning to main menu."
+    
+    if opt.secret == 'backdoor':
+        secret_print(users)
+        
 
     while True:
         print(main_menu)
@@ -232,12 +245,13 @@ def use_teller():
 
 
 def main():
-    use_teller()
+    opt = get_args()
+    use_teller(opt)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except (Exception, GeneratorExit, KeyboardInterrupt, SystemExit) as e:
-        name = type(e).__name__
-        print("Exception of type", name, "prevented program from continuing!")
+    # try:
+         main()
+    # # except (Exception, GeneratorExit, KeyboardInterrupt, SystemExit) as e:
+    #     name = type(e).__name__
+    #     print("Exception of type", name, "prevented program from continuing!")
