@@ -35,9 +35,9 @@ class MoneyMarket(Account):
         0 if withdraw exceeds current account balance,
         and otherwise 1"""
         if self._transaction_count >= 2:
-            return -1
+            return -2
         if to_withdraw > self._balance:
-            return 0
+            return -1
         else:
             self._balance -= to_withdraw
             self._transaction_count += 1
