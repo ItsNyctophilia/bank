@@ -40,7 +40,7 @@ class Menu:
 
     def has_selection(self, selection):
         """Return True if selection is in menu, else False"""
-        return True if self._selections.count(selection) > 0 else False
+        return True if selection in self._selections else False
 
     def add_selection(self, new_selection):
         """Add the given selection to the menu"""
