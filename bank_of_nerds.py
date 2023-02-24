@@ -88,6 +88,37 @@ def get_users(users_list):
         final_list.append(f"{user.last_name}, {user.first_name} : {user.user_ID}")
     return "\n".join(final_list)
 
+def select_user(default_error,users):
+    """Returns selected user or -1 if invalid option
+    
+    Keyword arguments:
+    default_error -- error message string
+    user_input -- sanatized output from get_input
+    selected_user -- valid user object to be returned 
+    
+    At least defualt_error, and users must be passed as an arguments,
+    otherwise the function will fail and not select a user.
+    Returns selected user or -1 if the program should produce
+    a value error or if the user selects a id not contained 
+    in the list of users."""
+    print("\n", get_users(users), "\n\n",
+    "Enter a User_ID from the above list: (B for back)", 
+    "\n", sep="")
+    user_input = get_input("B")
+    if user_input == -1:
+        return -1
+    try:
+        user_input = int(user_input)
+    except ValueError:
+        print("\n", default_error, "\n", sep="")
+        return -1
+    if 0 < user_input <= len(users):
+        selected_user = users[user_input - 1]
+        return selected_user
+    else:
+        print("\n", default_error, "\n", sep="")
+        return -1
+
 def use_teller():
     """Primary loop for the program"""
     main_menu, menu_dict, menu_dict_rev = create_main_menu()
@@ -117,22 +148,9 @@ def use_teller():
 
         elif user_input == "Select User":
             default_error = "Invalid ID, returning to main menu."
-            print("\n", get_users(users), "\n\n",
-                  "Enter a User_ID from the above list: (B for back)", 
-                  "\n", sep="")
-            user_input = get_input("B")
-            if user_input == -1:
+            selected_user = select_user(default_error,users)
+            if selected_user == -1:
                 continue
-            try:
-                user_input = int(user_input)
-            except ValueError:
-                print("\n", default_error, "\n", sep="")
-                continue
-            if 0 < user_input <= len(users):
-                selected_user = users[user_input - 1]
-            else:
-                print("\n", default_error, "\n", sep="")
-            continue
 
         elif user_input == "Display Accounts":
             default_error = "No active user account, returning to main menu."
