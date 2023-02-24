@@ -75,7 +75,7 @@ def generate_default_users(users_list):
 
     user2 = customer.Customer("John", "Doe", 24)
     savings2 = savings.Savings(25.42)
-    user2.add_account
+    user2.add_account("Savings", savings1)
 
     users_list.append(user1)
     users_list.append(user2)
@@ -116,9 +116,9 @@ def use_teller():
             print("\n", get_users(users), "\n", sep="")
         
         elif user_input == "Select User":
-            default_error = "Invalid ID, returning to main menu"
-            print("\n", get_users(users), "\n",
-                  "Enter a User_ID from the above list: (B for back)",
+            default_error = "Invalid ID, returning to main menu."
+            print("\n", get_users(users), "\n\n",
+                  "Enter a User_ID from the above list: (B for back)", 
                   "\n", sep="")
             user_input = get_input("B")
             if user_input == -1:
@@ -128,12 +128,22 @@ def use_teller():
             except ValueError:
                 print("\n", default_error, "\n", sep="")
                 continue
-            if 0 < user_input >= len(users):
-                users[user_input - 1]
+            if 0 < user_input <= len(users):
+                selected_user = users[user_input - 1]
             else:
                 print("\n", default_error, "\n", sep="")
             continue
-
+        
+        elif user_input == "Display Accounts":
+            default_error = "No active user account, returning to main menu."
+            if not selected_user:
+                print("\n", default_error, "\n", sep="")
+                continue
+            f_name = selected_user.first_name
+            l_name = selected_user.last_name
+            account_title = f"{f_name} {l_name}'s Accounts"
+            print("\n", account_title, "\n", "-" * len(account_title),
+                  "\n", selected_user.get_all_balances(), "\n", sep="")
 
 def main():
     use_teller()
