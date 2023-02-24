@@ -4,10 +4,8 @@ Defines a balance property to hold a current bank account balance,
 as well as methods to manually set that balance, deposit a given
 amount of money, or withdraw a given amount of money."""
 
-from abc import ABC, abstractmethod
 
-
-class Customer(ABC):
+class Customer():
     """A class that represents a bank account-holder
 
     Class Variables
@@ -60,12 +58,12 @@ class Customer(ABC):
     @property
     def last_name(self):
         """A customer's last name"""
-        return self._first_name
+        return self._last_name
 
     @last_name.setter
-    def last_name(self, first_name):
+    def last_name(self, last_name):
         """Set customer's last name"""
-        self._first_name = first_name
+        self._last_name = last_name
 
     @property
     def age(self):

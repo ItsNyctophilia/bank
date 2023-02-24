@@ -30,7 +30,7 @@ class Menu:
         """Return a string of the printout of sorted menu options"""
         menu_string = []
         for idx, selection in enumerate(self._selections, start=1):
-            menu_string.append(f"{idx}. {selection}")
+            menu_string.append(f"{idx}. {selection.title()}")
         return "\n".join(menu_string)
 
     @property
