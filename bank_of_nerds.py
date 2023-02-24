@@ -90,7 +90,7 @@ def get_users(users_list):
     legend = "(Last), (First) : (User_ID)"
     final_list = [legend, "-" * len(legend)]
     for user in users_list:
-        final_list.append((f"{user.last_name},"
+        final_list.append((f"{user.last_name}, "
                            f"{user.first_name} : {user.user_ID}"))
     return "\n".join(final_list)
 
@@ -232,6 +232,30 @@ def use_teller(opt):
 
         if user_input == "Get Users":
             print("\n", get_users(users), "\n", sep="")
+
+        elif user_input == "New User":
+            print("User Account creation mode:", "\n"
+                    "Provide name and age by 'first:last:age': (B for back)",
+                    "\n", "ex. 'John:Smith:21'", "\n", sep="")
+            user_input = get_input("B")
+            if user_input == -1:
+                continue
+            try:
+                f_name, l_name, age = user_input.split(":")
+            except ValueError:
+                print("\n", "Incorrect number of values provided, ", 
+                    back_to_menu, "\n", sep="")
+                continue
+            try:
+                age = int(age)
+                if 0 > age > 120:
+                    print("\n", "Invalid age supplied, ",
+                          back_to_menu, "\n", sep="")
+            except (ValueError, TypeError):
+                print("\n", "Invalid age field, ", back_to_menu, "\n", sep="")
+                continue
+            users.append(customer.Customer(f_name, l_name, age))
+            print("\n", "User account added successfully.", "\n", sep="")
 
         elif user_input == "Select User":
             print("\n", get_users(users), "\n\n",
