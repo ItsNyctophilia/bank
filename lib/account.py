@@ -7,7 +7,6 @@ amount of money, or withdraw a given amount of money."""
 from abc import ABC, abstractmethod
 
 
-
 class Account(ABC):
     """A class that represents a generic bank account
 

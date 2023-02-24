@@ -6,7 +6,7 @@ amount of money, or withdraw a given amount of money if they meet
 the age requirment."""
 
 from abc import ABC, abstractmethod
-from Account import Account
+from lib.account import Account
 
 
 class Retirement(Account):
@@ -23,9 +23,9 @@ class Retirement(Account):
         subtracts an amount from the current balance if
         customer meets the age requirments"""
 
-    def __init__(self, _balance):
-        super().__init__
-        self._balance = round(_balance, 2)
+    def __init__(self, balance):
+        super().__init__(balance)
+        self._balance = round(balance, 2)
 
     def withdraw(self, to_withdraw, customer_age):
         """Withdraws money from the account
@@ -34,9 +34,9 @@ class Retirement(Account):
         balance, 0 if customer is not old enough to withdraw,
         and otherwise returns 1"""
         if customer_age < 67:
-            return (0)
+            return 0
         if to_withdraw > self._balance:
-            return (-1)
+            return -1
         else:
             self._balance -= to_withdraw
-            return (1)
+            return 1
