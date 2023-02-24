@@ -32,19 +32,27 @@ def create_main_menu():
     return (main_menu, menu_dict, menu_dict_rev)
 
 
-def get_input(quit_idx):
+def get_input(quit_string=None, quit_idx=None):
     """Returns sanitized user input or -1 if program should exit
     
     Keyword arguments:
-    quit_idx -- numerical index into main menu of the quit button"""
+    quit_string -- word to quit program on
+    quit_idx -- numerical index into main menu of the quit button
+    
+    At least quit_string must be passed as an argument,
+    otherwise quit button functionality will not be performed.
+    Returns sanitized user input or -1 if the program should
+    perform either 'go-back' or a 'quit'."""
     while True:
         try:
             selection = input("> ")
             selection =  selection.title().strip()
             if not selection:
                 continue
-            elif selection == "quit" or selection == str(quit_idx):
-                return -1
+            if quit_string:
+                if (selection == quit_string or
+                    selection == str(quit_idx)):
+                    return -1
             break
 
         except (KeyboardInterrupt, EOFError) as e:
@@ -85,10 +93,11 @@ def use_teller():
     main_menu, menu_dict, menu_dict_rev = create_main_menu()
     users = []
     users = generate_default_users(users)
+    selected_user = None
 
     while True:
         print(main_menu)
-        user_input = get_input(menu_dict["Quit"])
+        user_input = get_input("Quit", menu_dict["Quit"])
         if user_input == -1:
             # Program exiting due to EOF, KeyboardInterrupt, or "quit"
             return
@@ -105,6 +114,25 @@ def use_teller():
 
         if user_input == "Get Users":
             print("\n", get_users(users), "\n", sep="")
+        
+        elif user_input == "Select User":
+            default_error = "Invalid ID, returning to main menu"
+            print("\n", get_users(users), "\n",
+                  "Enter a User_ID from the above list: (B for back)",
+                  "\n", sep="")
+            user_input = get_input("B")
+            if user_input == -1:
+                continue
+            try:
+                user_input = int(user_input)
+            except ValueError:
+                print("\n", default_error, "\n", sep="")
+                continue
+            if 0 < user_input >= len(users):
+                users[user_input - 1]
+            else:
+                print("\n", default_error, "\n", sep="")
+            continue
 
 
 def main():
