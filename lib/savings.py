@@ -26,14 +26,13 @@ class Savings(Account):
         customer would withdraw more than what is in the
         account, nothing is withdrawn"""
 
-    def __init__(self, balance):
-        super().__init__(balance)
-        self._balance = round(balance, 2)
+    def __init__(self, _balance):
+        super().__init__(_balance)
 
     def withdraw(self, to_withdraw):
         """Withdraws money from the account
 
-        Returns negetive 1 if withdraw exceeds current account
+        Returns negative 1 if withdraw exceeds current account
         balance otherwise returns 1"""
         if to_withdraw > self._balance:
             return -1

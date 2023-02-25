@@ -1,8 +1,8 @@
-"""Define 'Account' abstract class for use as a generic banking account
+"""Define 'Customer' abstract class for use as a user's banking profile
 
-Defines a balance property to hold a current bank account balance,
-as well as methods to manually set that balance, deposit a given
-amount of money, or withdraw a given amount of money."""
+Defines relevant fields such as the user's name, age, user_id, as
+well as a dictionary of all of their held accounts by type. Methods
+to withdraw from and deposit to the specified account are provided."""
 
 
 class Customer():
@@ -20,19 +20,19 @@ class Customer():
         customer's last name
     age : int
         customer's age in years
-    user_ID : int
+    user_id : int
         customer's unique ID
     accounts : dict
         dictionary containing '[Account Type] : [Acc1, Acc2, Acc3...]'
-        (where Acc is a sub-class instance derived from Account) pairings
-        that make up all of a given user's accounts
+        (where Acc is a sub-class instance derived from Account)
+        pairings that make up all of a given user's accounts
 
     Methods
     -------
     withdraw_from():
-        subtracts an amount from the current balance
-    deposit():
-        adds an amount to the current balance"""
+        subtracts an amount from the given account's current balance
+    deposit_into():
+        adds an amount to the given account's current balance"""
 
     id = 1
 

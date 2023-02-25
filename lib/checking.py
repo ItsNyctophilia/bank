@@ -1,9 +1,9 @@
-"""Define 'Checking' class for use as a checking banking account
+"""Define 'Checking' class for use as a checking account
 
 Defines a balance property to hold a current bank account balance,
 as well as methods to manually set that balance, deposit a given
 amount of money, or withdraw a given amount of money. When the
-amount requested to withdraw is more then the amount in the account,
+amount requested to withdraw is more than the amount in the account,
 an overdraft fee is charged."""
 
 
@@ -27,9 +27,8 @@ class Checking(Account):
         account, then an overdraft fee of $35 is charged
         on top of the withdrawl, up to $500 over the balance"""
 
-    def __init__(self, balance):
-        super().__init__(balance)
-        self._balance = round(balance, 2)
+    def __init__(self, _balance):
+        super().__init__(_balance)
 
     def withdraw(self, to_withdraw):
         """Withdraws money from the account

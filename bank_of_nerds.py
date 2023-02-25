@@ -71,7 +71,6 @@ def get_input(quit_string=None, quit_idx=None):
 
 def generate_default_users(users_list):
     """Manually generates the two required default users"""
-    # TODO: Refactor to be more DRY
     user1 = customer.Customer("Sherri", "Perrson", 83)
     savings1 = savings.Savings(14356.99)
     checking1 = checking.Checking(1504.32)
@@ -122,6 +121,7 @@ def get_account_printout(selected_user):
 
 
 def get_args():
+    """Returns the program's command line arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--secret", choices=("backdoor",), default="")
     args = parser.parse_args()
@@ -151,7 +151,8 @@ def perform_transaction(account_type, number, amount, user, user_func):
         return -3
 
     return_msg = {
-        "Checking": {-1: "overdraft limit exceeded", 0: "account overdrafted"},
+        "Checking": {
+            -1: "overdraft limit exceeded", 0: "account overdrafted"},
         "Savings": {-1: "account balance exceeded"},
         "401K": {
             -2: "not old enough to withdraw",
@@ -190,11 +191,12 @@ def perform_transaction(account_type, number, amount, user, user_func):
 
 
 def secret_print(users):
+    """Prints the values of the default users on start-up"""
     for user in users:
         print(
             f"{user.first_name} {user.last_name}\n",
             f"Age: {user.age} User_id: {user.user_id}\n",
-            get_account_printout(user),
+            get_account_printout(user), sep=""
         )
 
 
@@ -221,8 +223,14 @@ def select_user(users):
 
 
 def use_teller(opt):
-    """Primary loop for the program"""
-    # TODO: better docstring
+    """Allows the user to interact with the teller interface
+    
+    Keyword arguments:
+    opt -- whether or not '--secret=backdoor' was used
+    
+    This function runs the main loop for accepting user input,
+    parsing responses to prompts, and calling the appropriate
+    helper functions during runtime."""
     main_menu, menu_dict, menu_dict_rev = create_main_menu()
     users = []
     users = generate_default_users(users)
@@ -281,7 +289,7 @@ def use_teller(opt):
                 continue
             try:
                 age = int(age)
-                if 0 > age > 120:
+                if age < 0 or age > 120:
                     print(
                         "\n",
                         "Invalid age supplied, ",
@@ -390,6 +398,8 @@ def use_teller(opt):
                 sep="",
             )
             user_input = get_input("B")
+            if user_input == -1:
+                continue
             try:
                 account_type, amount = user_input.split(":")
             except ValueError:
