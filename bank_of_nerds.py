@@ -93,11 +93,11 @@ def generate_default_users(users_list):
 
 def get_users(users_list):
     "Returns a formatted string of all users and their IDs"
-    legend = "(Last), (First) : (User_ID)"
+    legend = "(Last), (First) : (User_id)"
     final_list = [legend, "-" * len(legend)]
     for user in users_list:
         final_list.append(
-            (f"{user.last_name}, " f"{user.first_name} : {user.user_ID}")
+            (f"{user.last_name}, " f"{user.first_name} : {user.user_id}")
         )
     return "\n".join(final_list)
 
@@ -193,7 +193,7 @@ def secret_print(users):
     for user in users:
         print(
             f"{user.first_name} {user.last_name}\n",
-            f"Age: {user.age} User_ID: {user.user_ID}\n",
+            f"Age: {user.age} User_id: {user.user_id}\n",
             get_account_printout(user),
         )
 
