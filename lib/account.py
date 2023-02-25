@@ -40,8 +40,9 @@ class Account(ABC):
         self._balance = round(new_balance, 2)
 
     def deposit(self, to_deposit):
-        """Add money to the current balance, returns new balance"""
+        """Add money to the current balance, returns 1"""
         self._balance += round(to_deposit, 2)
+        return 1
 
     @abstractmethod
     def withdraw(self, to_withdraw):
