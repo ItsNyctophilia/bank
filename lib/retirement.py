@@ -23,9 +23,8 @@ class Retirement(Account):
         subtracts an amount from the current balance if
         customer meets the age requirments"""
 
-    def __init__(self, balance):
-        super().__init__(balance)
-        self._balance = round(balance, 2)
+    def __init__(self, _balance):
+        super().__init__(_balance)
 
     def withdraw(self, to_withdraw, customer_age):
         """Withdraws money from the account
