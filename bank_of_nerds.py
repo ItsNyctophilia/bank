@@ -289,6 +289,7 @@ def use_teller(opt):
                         "\n",
                         sep="",
                     )
+                    continue
             except (ValueError, TypeError):
                 print("\n", "Invalid age field, ", back_to_menu, "\n", sep="")
                 continue
