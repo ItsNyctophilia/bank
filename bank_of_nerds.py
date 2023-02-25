@@ -448,6 +448,7 @@ def use_teller(opt):
 
 
 def main():
+    """Parses command-line options and cals the main teller loop"""
     opt = get_args()
     use_teller(opt)
 
