@@ -13,7 +13,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(self.customer.first_name, "John")
         self.assertEqual(self.customer.last_name, "Doe")
         self.assertEqual(self.customer.age, 30)
-        self.assertEqual(self.customer.user_ID, 4)
+        self.assertEqual(self.customer.user_id, 4)
         self.assertDictEqual(
             self.customer._accounts,
             {

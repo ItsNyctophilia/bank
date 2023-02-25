@@ -34,16 +34,16 @@ class Customer():
     deposit():
         adds an amount to the current balance"""
 
-    ID = 1
+    id = 1
 
     def __init__(self, first_name, last_name, age):
         self._first_name = first_name
         self._last_name = last_name
         self._age = age
-        self._user_ID = Customer.ID
+        self._user_id = Customer.id
         self._accounts = {"Checking": [], "Savings": [],
                           "401K": [], "Money Market Fund": []}
-        Customer.ID += 1
+        Customer.id += 1
 
     @property
     def first_name(self):
@@ -76,9 +76,9 @@ class Customer():
         self._age = age
 
     @property
-    def user_ID(self):
+    def user_id(self):
         """A customer's unique user ID number"""
-        return self._user_ID
+        return self._user_id
 
     def list_accounts_of_type(self, account_type):
         """Returns string containing balances for given account type"""
